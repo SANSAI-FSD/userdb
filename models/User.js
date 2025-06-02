@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   biodata: { type: String, required: true },
   jobRole: { type: String, required: true },
+   image: String
 });
 
 const User = mongoose.model("Post", userSchema);
