@@ -3,6 +3,41 @@ const router = express.Router();
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname);
+    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, unique + ext);
+  },
+});
+
+const upload = multer({ storage });
+
+router.post("/", upload.single("image"), async (req, res) => {
+  try {
+    const { username, password, biodata, jobRole } = req.body;
+    const imagePath = req.file ? `/uploads/${req.file.filename}` : "";
+
+    const newUser = new User({
+      username,
+      password,
+      biodata,
+      jobRole,
+      image: imagePath, // make sure this field exists in your schema
+    });
+
+    await newUser.save();
+    res.status(201).json(newUser);
+  } catch (err) {
+    console.error("Error in user registration:", err);
+    res.status(500).json({ error: "Server Error" });
+  }
+});
+
+
 router.get("/api/users/", async (req, res) => {
   try {
     const { limit } = req.query;
@@ -83,6 +118,7 @@ router.post("/api/users/", async (req, res) => {
       password: hashedPassword,
       biodata,
       jobRole,
+      image: imagePath
     });
     const savedUser = await newUser.save();
     res.status(200).json(savedUser);
