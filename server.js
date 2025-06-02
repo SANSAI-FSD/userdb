@@ -132,3 +132,13 @@ router.post("/", upload.single("image"), async (req, res) => {
 });
 
 export default router;
+
+import cors from "cors";
+
+// Allow requests from local frontend
+const allowedOrigins = ['http://localhost:5173', 'https://yourfrontenddomain.com'];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
