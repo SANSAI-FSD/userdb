@@ -16,27 +16,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-router.post("/", upload.single("image"), async (req, res) => {
-  try {
-    const { username, password, biodata, jobRole } = req.body;
-    const imagePath = req.file ? `/uploads/${req.file.filename}` : "";
-
-    const newUser = new User({
-      username,
-      password,
-      biodata,
-      jobRole,
-      image: imagePath, // make sure this field exists in your schema
-    });
-
-    await newUser.save();
-    res.status(201).json(newUser);
-  } catch (err) {
-    console.error("Error in user registration:", err);
-    res.status(500).json({ error: "Server Error" });
-  }
-});
-
 
 router.get("/api/users/", async (req, res) => {
   try {
@@ -118,7 +97,6 @@ router.post("/api/users/", async (req, res) => {
       password: hashedPassword,
       biodata,
       jobRole,
-      image: imagePath
     });
     const savedUser = await newUser.save();
     res.status(200).json(savedUser);
